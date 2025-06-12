@@ -98,30 +98,63 @@ try {
     error_log('خطأ في الاتصال بقاعدة البيانات: ' . $e->getMessage());
     $error = 'حدث خطأ في النظام. يرجى المحاولة لاحقاً.';
 }
+
+
+$admin_id = $_SESSION['admin_id'];
+
+// استعلام لاسترجاع اللغة المفضلة
+$query = $pdo->prepare("SELECT langue_preferee FROM admins WHERE id = :id");
+$query->execute(['id' => $admin_id]);
+$admin = $query->fetch();
+
+$langue_preferee = $admin && in_array($admin['langue_preferee'], ['ar','en','fr']) ? $admin['langue_preferee'] : 'ar';
+
+// تحديد اتجاه الصفحة واللغة حسب اللغة المفضلة
+$dir = $langue_preferee === 'ar' ? 'rtl' : 'ltr';
+$translations = [
+    'ar' => [
+        'dashboard_title' => 'لوحة تحكم منصة العمرة',
+        'welcome' => 'مرحباً بك في لوحة التحكم',
+        'subtitle' => 'إدارة شاملة لمنصة العمرة'
+    ],
+    'en' => [
+        'dashboard_title' => 'Umrah Platform Dashboard',
+        'welcome' => 'Welcome to Dashboard',
+        'subtitle' => 'Comprehensive Umrah Platform Management'
+    ],
+    'fr' => [
+        'dashboard_title' => 'Tableau de Bord Plateforme Omra',
+        'welcome' => 'Bienvenue au Tableau de bord',
+        'subtitle' => 'Gestion complète de la plateforme Omra'
+    ]
+];
+
+$current_translations = $translations[$langue_preferee];
 ?>
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="<?php echo $langue_preferee; ?>" dir="<?php echo $dir; ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم منصة العمرة | Umrah Platform Dashboard</title>
+    <title><?php echo $current_translations['dashboard_title']; ?></title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* استبدل تعريف الألوان في :root بالألوان الإسلامية */
         :root {
-            --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --warning: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --primary: linear-gradient(135deg, #198754 0%, #14532d 100%); /* أخضر إسلامي */
+            --secondary: linear-gradient(135deg, #ffe066 0%, #ffd700 100%); /* ذهبي */
+            --success: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --warning: linear-gradient(135deg, #ffe066 0%, #ffd700 100%);
             --danger: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            --dark: #2c3e50;
+            --dark: #14532d;
             --light: #f8f9fa;
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --text-primary: #2c3e50;
+            --card-bg: rgba(255, 255, 255, 0.97);
+            --text-primary: #14532d;
             --text-secondary: #6c757d;
             --border-radius: 20px;
-            --shadow: 0 10px 30px rgba(0,0,0,0.1);
-            --shadow-hover: 0 20px 60px rgba(0,0,0,0.15);
+            --shadow: 0 10px 30px rgba(25, 135, 84, 0.08);
+            --shadow-hover: 0 20px 60px rgba(25, 135, 84, 0.13);
         }
 
         * {
@@ -132,7 +165,7 @@ try {
 
         body {
             font-family: 'Cairo', 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+                           background: linear-gradient(135deg,rgb(4, 128, 70) 0%,rgb(180, 163, 5) 100%);
             min-height: 100vh;
             overflow-x: hidden;
         }
@@ -144,8 +177,9 @@ try {
 
         /* Sidebar */
         .sidebar {
-            width: 280px;
-            background: var(--card-bg);
+            width: 250px;
+            background: linear-gradient(135deg, #fffbe6 0%, #e8ffe8 100%);
+            border-left: 4px solid #198754;
             backdrop-filter: blur(20px);
             box-shadow: var(--shadow);
             padding: 2rem 0;
@@ -206,7 +240,8 @@ try {
             left: 0;
             width: 0;
             height: 100%;
-            background: var(--primary);
+             background: linear-gradient(135deg,rgb(180, 163, 5) 0%,rgb(4, 128, 70) 100%);
+
             transition: width 0.3s ease;
             z-index: -1;
         }
@@ -231,7 +266,7 @@ try {
         /* Main Content */
         .main-content {
             flex: 1;
-            margin-right: 280px;
+            margin-right: 250px;
             padding: 2rem;
             transition: all 0.3s ease;
         }
@@ -251,6 +286,7 @@ try {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            height: 125px;
         }
 
         .header-left h1 {
@@ -280,16 +316,18 @@ try {
             border: none;
             border-radius: 25px;
             background: var(--primary);
-            color: white;
+            color: #fff;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 600;
+            border: 1px solid #198754;
         }
 
         .lang-btn:hover,
         .lang-btn.active {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
+            background: var(--secondary);
+            color: #14532d;
+            border: 1px solid #ffd700;
         }
 
         .user-info {
@@ -316,15 +354,15 @@ try {
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
 
         .stat-card {
             background: var(--card-bg);
             backdrop-filter: blur(20px);
             border-radius: var(--border-radius);
-            padding: 2rem;
+            padding: 1rem;
             box-shadow: var(--shadow);
             transition: all 0.3s ease;
             position: relative;
@@ -571,14 +609,35 @@ try {
             --text-primary: #f7fafc;
             --text-secondary: #cbd5e0;
         }
+
+        /* Add this at the beginning of your CSS */
+    body[dir="ltr"] .sidebar {
+        left: 0;
+        right: auto;
+        border-right: 4px solid #198754;
+        border-left: none;
+    }
+    
+    body[dir="ltr"] .main-content {
+        margin-left: 250px;
+        margin-right: 0;
+    }
+    
+    body[dir="rtl"] .sidebar {
+        right: 0;
+        left: auto;
+        border-left: 4px solid #198754;
+        border-right: none;
+    }
+    
+    body[dir="rtl"] .main-content {
+        margin-right: 250px;
+        margin-left: 0;
+    }
     </style>
 </head>
-<body>
-    <!-- Sidebar Toggle -->
-    <button class="sidebar-toggle" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
-
+<body dir="<?php echo $dir; ?>">
+    <script>setupLanguageSwitcher();</script>
     <div class="dashboard-container">
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
@@ -597,41 +656,41 @@ try {
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="manage_agencies.php">
                         <i class="fas fa-building"></i>
                         <span class="sidebar-text" data-ar="إدارة الوكالات" data-en="Manage Agencies" data-fr="Gérer les Agences">إدارة الوكالات</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="demande_umrah.php">
                         <i class="fas fa-users"></i>
                         <span class="sidebar-text" data-ar="إدارة المعتمرين" data-en="Manage Pilgrims" data-fr="Gérer les Pèlerins">إدارة المعتمرين</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="manage_offers.php">
                         <i class="fas fa-tags"></i>
                         <span class="sidebar-text" data-ar="إدارة العروض" data-en="Manage Offers" data-fr="Gérer les Offres">إدارة العروض</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="manage_requests.php">
                         <i class="fas fa-clipboard-list"></i>
                         <span class="sidebar-text" data-ar="إدارة الطلبات" data-en="Manage Requests" data-fr="Gérer les Demandes">إدارة الطلبات</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="manage_admins.php">
                         <i class="fas fa-user-shield"></i>
                         <span class="sidebar-text" data-ar="إدارة المدراء" data-en="Manage Admins" data-fr="Gérer les Admins">إدارة المدراء</span>
                     </a>
                 </li>
-                <li>
-                    <a href="#">
+                <!-- <li>
+                    <a href="manage_sub_admins.php">
                         <i class="fas fa-user-cog"></i>
                         <span class="sidebar-text" data-ar="إدارة المدراء الثانويين" data-en="Manage Secondary Admins" data-fr="Gérer les Admins Secondaires">إدارة المدراء الثانويين</span>
                     </a>
-                </li>
+                </li> -->
                 <li>
                     <a href="#">
                         <i class="fas fa-comments"></i>
@@ -658,15 +717,16 @@ try {
             <!-- Header -->
             <div class="header">
                 <div class="header-left">
-                    <h1 data-ar="مرحباً بك في لوحة التحكم" data-en="Welcome to Dashboard" data-fr="Bienvenue au Tableau de bord">مرحباً بك في لوحة التحكم</h1>
-                    <p data-ar="إدارة شاملة لمنصة العمرة" data-en="Comprehensive Umrah Platform Management" data-fr="Gestion complète de la plateforme Omra">إدارة شاملة لمنصة العمرة</p>
+                    <h1><?php echo $current_translations['welcome']; ?></h1>
+                    <p><?php echo $current_translations['subtitle']; ?></p>
                 </div>
                 <div class="header-right">
                     <div class="language-switcher">
-                        <button class="lang-btn active" data-lang="ar">العربية</button>
-                        <button class="lang-btn" data-lang="en">English</button>
-                        <button class="lang-btn" data-lang="fr">Français</button>
-                    </div>
+    <button class="lang-btn <?php echo ($langue_preferee === 'ar') ? 'active' : ''; ?>" data-lang="ar">العربية</button>
+    <button class="lang-btn <?php echo ($langue_preferee === 'en') ? 'active' : ''; ?>" data-lang="en">English</button>
+    <button class="lang-btn <?php echo ($langue_preferee === 'fr') ? 'active' : ''; ?>" data-lang="fr">Français</button>
+</div>
+
                     <div class="user-info">
                         <div class="user-avatar">
                             <i class="fas fa-user"></i>
@@ -691,10 +751,10 @@ try {
                             <i class="fas fa-building"></i>
                         </div>
                     </div>
-                    <div class="stat-change">
+                    <!-- <div class="stat-change">
                         <i class="fas fa-arrow-up"></i>
                         <span>+12% هذا الشهر</span>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="stat-card">
@@ -707,10 +767,10 @@ try {
                             <i class="fas fa-users"></i>
                         </div>
                     </div>
-                    <div class="stat-change">
+                    <!-- <div class="stat-change">
                         <i class="fas fa-arrow-up"></i>
                         <span>+25% هذا الشهر</span>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="stat-card">
@@ -723,486 +783,241 @@ try {
                             <i class="fas fa-tags"></i>
                         </div>
                     </div>
-                    <div class="stat-change">
+                    <!-- <div class="stat-change">
                         <i class="fas fa-arrow-up"></i>
                         <span>+8% هذا الشهر</span>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="stat-card">
                     <div class="stat-header">
                         <div>
-                            <div class="stat-number"><?php echo number_format($pendingRequests); ?></div>
+                            <div class="stat-number" style="font-size: 1.5rem;"><?php echo number_format($pendingRequests); ?><div class="stat-change" style="color: #ffc107; margin-top: 1px; margin-bottom: 1px; font-size: 0.8rem;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>تحتاج مراجعة</span>
+                    </div></div>
                             <div class="stat-label" data-ar="الطلبات المعلقة" data-en="Pending Requests" data-fr="Demandes en Attente">الطلبات المعلقة</div>
                         </div>
                         <div class="stat-icon">
                             <i class="fas fa-clock"></i>
                         </div>
                     </div>
-                    <div class="stat-change" style="color: #ffc107;">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <span>تحتاج مراجعة</span>
-                    </div>
+                    
                 </div>
             </div>
 
             <!-- Charts Section -->
+            <?php
+            // جلب بيانات الحجوزات الشهرية (آخر 12 شهر) فقط إذا كان لديه صلاحية الرؤية
+            $monthlyBookings = [];
+            $months = [];
+            $agencyLabels = [];
+            $agencyCounts = [];
+
+            // مثال: تحقق من صلاحية المدير العام أو وجود صلاحية رؤية الإحصائيات
+            $canViewStats = true; // اجعلها false إذا أردت تقييد الوصول بناءً على الصلاحيات
+
+            if ($canViewStats) {
+                try {
+                    $stmt = $pdo->query("
+                        SELECT 
+                            TO_CHAR(date_trunc('month', date_demande), 'YYYY-MM') AS month,
+                            COUNT(*) AS total
+                        FROM demande_umrah
+                        WHERE date_demande >= NOW() - INTERVAL '1 year'
+                        GROUP BY date_trunc('month', date_demande), TO_CHAR(date_trunc('month', date_demande), 'YYYY-MM')
+                        ORDER BY date_trunc('month', date_demande) ASC
+                    ");
+                    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    foreach ($results as $row) {
+                        $months[] = $row['month'];
+                        $monthlyBookings[] = (int)$row['total'];
+                    }
+                } catch (Exception $e) {
+                    error_log('Error querying monthly bookings: ' . $e->getMessage());
+                    $months = [];
+                    $monthlyBookings = [];
+                }
+
+                // جلب توزيع الوكالات حسب الولاية
+                try {
+                    $stmt = $pdo->query("
+                        SELECT 
+                            COALESCE(wilaya, 'غير محدد') as wilaya,
+                            COUNT(*) AS total
+                        FROM agences
+                        GROUP BY wilaya
+                        ORDER BY total DESC
+                        LIMIT 6
+                    ");
+                    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    
+                    foreach ($results as $row) {
+                        $agencyLabels[] = $row['wilaya'];
+                        $agencyCounts[] = (int)$row['total'];
+                    }
+                } catch (Exception $e) {
+                    error_log('Error querying agency distribution: ' . $e->getMessage());
+                    $agencyLabels = [];
+                    $agencyCounts = [];
+                }
+            }
+            ?>
+
             <div class="charts-section">
+            <?php if ($canViewStats): ?>
+                <!-- Monthly Booking Statistics Chart -->
                 <div class="chart-card">
                     <div class="chart-header">
                         <h3 class="chart-title" data-ar="إحصائيات الحجوزات الشهرية" data-en="Monthly Booking Statistics" data-fr="Statistiques de Réservation Mensuelle">إحصائيات الحجوزات الشهرية</h3>
                     </div>
-                    <div class="chart-placeholder">
-                        <i class="fas fa-chart-line" style="font-size: 3rem; margin-left: 1rem;"></i>
-                        <span data-ar="رسم بياني للحجوزات" data-en="Booking Chart" data-fr="Graphique des Réservations">رسم بياني للحجوزات</span>
-                    </div>
+                    <canvas id="monthlyBookingsChart" height="200"></canvas>
                 </div>
 
+                <!-- Agency Distribution Pie Chart -->
                 <div class="chart-card">
                     <div class="chart-header">
                         <h3 class="chart-title" data-ar="توزيع الوكالات" data-en="Agency Distribution" data-fr="Distribution des Agences">توزيع الوكالات</h3>
                     </div>
-                    <div class="chart-placeholder">
-                        <i class="fas fa-chart-pie" style="font-size: 3rem; margin-left: 1rem;"></i>
-                        <span data-ar="رسم دائري" data-en="Pie Chart" data-fr="Graphique Circulaire">رسم دائري</span>
-                    </div>
+                    <canvas id="agencyDistributionChart" height="200"></canvas>
                 </div>
+            <?php else: ?>
+                <div style="padding:2rem; background:#fff3cd; border-radius:20px; color:#856404; text-align:center;">
+                    <i class="fas fa-exclamation-triangle" style="font-size:2rem;"></i><br>
+                    <span data-ar="ليس لديك صلاحية لرؤية الإحصائيات" data-en="You do not have permission to view statistics" data-fr="Vous n'avez pas la permission de voir les statistiques">ليس لديك صلاحية لرؤية الإحصائيات</span>
+                </div>
+            <?php endif; ?>
             </div>
 
-            <!-- Recent Activity -->
-            <div class="recent-activity">
-                <div class="chart-header">
-                    <h3 class="chart-title" data-ar="النشاطات الأخيرة" data-en="Recent Activities" data-fr="Activités Récentes">النشاطات الأخيرة</h3>
-                </div>
-                
-                <?php foreach ($recentActivities as $activity): ?>
-                <div class="activity-item">
-                    <div class="activity-icon" style="background: <?php 
-                        echo match($activity['type']) {
-                            'new_agency' => 'var(--success)',
-                            'new_request' => 'var(--primary)',
-                            'new_offer' => 'var(--warning)',
-                            default => 'var(--secondary)'
-                        };
-                    ?>;">
-                        <i class="fas <?php 
-                            echo match($activity['type']) {
-                                'new_agency' => 'fa-building',
-                                'new_request' => 'fa-user-plus',
-                                'new_offer' => 'fa-tags',
-                                default => 'fa-bell'
-                            };
-                        ?>"></i>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-title"><?php echo htmlspecialchars($activity['title']); ?></div>
-                        <div class="activity-time"><?php 
-                            $date = new DateTime($activity['date']);
-                            $now = new DateTime();
-                            $diff = $date->diff($now);
-                            
-                            if ($diff->h == 0) {
-                                echo "منذ " . $diff->i . " دقيقة";
-                            } elseif ($diff->h < 24) {
-                                echo "منذ " . $diff->h . " ساعة";
-                            } else {
-                                echo "منذ " . $diff->days . " يوم";
+            <?php if ($canViewStats): ?>
+            <!-- Chart.js -->
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                // Monthly Bookings Chart
+                const monthlyBookingsElem = document.getElementById('monthlyBookingsChart');
+                if (monthlyBookingsElem) {
+                    const monthlyBookingsCtx = monthlyBookingsElem.getContext('2d');
+                    const monthlyBookingsChart = new Chart(monthlyBookingsCtx, {
+                        type: 'line',
+                        data: {
+                            labels: <?php echo json_encode($months, JSON_UNESCAPED_UNICODE); ?>,
+                            datasets: [{
+                                label: 'الحجوزات',
+                                data: <?php echo json_encode($monthlyBookings); ?>,
+                                backgroundColor: 'rgba(25, 135, 84, 0.2)',
+                                borderColor: '#198754',
+                                borderWidth: 3,
+                                pointBackgroundColor: '#ffd700',
+                                pointBorderColor: '#14532d',
+                                tension: 0.4,
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return 'الحجوزات: ' + context.parsed.y;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    title: { display: true, text: 'الشهر' }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    title: { display: true, text: 'عدد الحجوزات' }
+                                }
                             }
-                        ?></div>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-            </div>
+                        }
+                    });
+                }
 
-            <!-- Secondary Admins Section -->
-            <div class="secondary-admins-section" style="margin-top: 2rem;">
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3 class="chart-title" data-ar="إدارة المدراء الثانويين" data-en="Secondary Admins Management" data-fr="Gestion des Admins Secondaires">إدارة المدراء الثانويين</h3>
-                        <button class="btn-add-admin" style="background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 25px; cursor: pointer;">
-                            <i class="fas fa-plus"></i>
-                            <span data-ar="إضافة مدير جديد" data-en="Add New Admin" data-fr="Ajouter un Nouvel Admin">إضافة مدير جديد</span>
-                        </button>
-                    </div>
-                    
-                    <div class="admins-table" style="margin-top: 1rem;">
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background: rgba(0,0,0,0.05);">
-                                    <th style="padding: 1rem; text-align: right;">الاسم</th>
-                                    <th style="padding: 1rem; text-align: right;">البريد الإلكتروني</th>
-                                    <th style="padding: 1rem; text-align: right;">الصلاحيات</th>
-                                    <th style="padding: 1rem; text-align: right;">الحالة</th>
-                                    <th style="padding: 1rem; text-align: right;">الإجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($secondaryAdmins as $admin): ?>
-                                <tr>
-                                    <td style="padding: 1rem; border-bottom: 1px solid rgba(0,0,0,0.1);"><?php echo htmlspecialchars($admin['nom']); ?></td>
-                                    <td style="padding: 1rem; border-bottom: 1px solid rgba(0,0,0,0.1);"><?php echo htmlspecialchars($admin['email']); ?></td>
-                                    <td style="padding: 1rem; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                                        <?php 
-                                        $permissions = json_decode($admin['permissions'], true);
-                                        foreach ($permissions as $perm):
-                                            if ($perm['permission_key']):
-                                        ?>
-                                            <span class="permission-badge" style="background: var(--primary); color: white; padding: 0.25rem 0.5rem; border-radius: 15px; font-size: 0.9rem; margin-left: 0.5rem;">
-                                                <?php echo htmlspecialchars($perm['permission_key']); ?>
-                                            </span>
-                                        <?php 
-                                            endif;
-                                        endforeach; 
-                                        ?>
-                                    </td>
-                                    <td style="padding: 1rem; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                                        <span style="color: #28a745;">نشط</span>
-                                    </td>
-                                    <td style="padding: 1rem; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                                        <button class="btn-edit" style="background: var(--primary); color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 15px; cursor: pointer; margin-left: 0.5rem;">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn-delete" style="background: var(--danger); color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 15px; cursor: pointer;">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Permissions Modal Template -->
-            <div id="permissionsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
-                <div style="background: white; width: 90%; max-width: 600px; margin: 2rem auto; padding: 2rem; border-radius: var(--border-radius);">
-                    <h3 style="margin-bottom: 1.5rem;">إدارة الصلاحيات</h3>
-                    <div class="permissions-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
-                        <div class="permission-item">
-                            <label style="display: flex; align-items: center; gap: 0.5rem;">
-                                <input type="checkbox" name="permission" value="manage_pilgrims">
-                                <span>إدارة المعتمرين</span>
-                            </label>
-                        </div>
-                        <div class="permission-item">
-                            <label style="display: flex; align-items: center; gap: 0.5rem;">
-                                <input type="checkbox" name="permission" value="manage_agencies">
-                                <span>إدارة الوكالات</span>
-                            </label>
-                        </div>
-                        <div class="permission-item">
-                            <label style="display: flex; align-items: center; gap: 0.5rem;">
-                                <input type="checkbox" name="permission" value="manage_offers">
-                                <span>إدارة العروض</span>
-                            </label>
-                        </div>
-                        <div class="permission-item">
-                            <label style="display: flex; align-items: center; gap: 0.5rem;">
-                                <input type="checkbox" name="permission" value="manage_requests">
-                                <span>إدارة الطلبات</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div style="margin-top: 2rem; display: flex; justify-content: flex-end; gap: 1rem;">
-                        <button class="btn-cancel" style="background: var(--secondary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 25px; cursor: pointer;">إلغاء</button>
-                        <button class="btn-save" style="background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 25px; cursor: pointer;">حفظ</button>
-                    </div>
-                </div>
-            </div>
+                // Agency Distribution Pie Chart
+                const agencyDistributionElem = document.getElementById('agencyDistributionChart');
+                if (agencyDistributionElem) {
+                    const agencyDistributionCtx = agencyDistributionElem.getContext('2d');
+                    const agencyDistributionChart = new Chart(agencyDistributionCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: <?php echo json_encode($agencyLabels, JSON_UNESCAPED_UNICODE); ?>,
+                            datasets: [{
+                                data: <?php echo json_encode($agencyCounts); ?>,
+                                backgroundColor: [
+                                    '#198754', '#ffd700', '#43e97b', '#fa709a', '#fee140', '#14532d'
+                                ],
+                                borderColor: '#fff',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { position: 'bottom' },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return context.label + ': ' + context.parsed + ' وكالة';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            </script>
+            <?php endif; ?>
+            <!-- Recent Activity -->
+              
         </div>
     </div>
 
     <script>
-        // Language data
-        const translations = {
-            ar: {
-                direction: 'rtl',
-                welcome: 'مرحباً بك في لوحة التحكم',
-                subtitle: 'إدارة شاملة لمنصة العمرة',
-                dashboard: 'لوحة التحكم',
-                agencies: 'إدارة الوكالات',
-                pilgrims: 'إدارة المعتمرين',
-                offers: 'إدارة العروض',
-                requests: 'إدارة الطلبات',
-                admins: 'إدارة المدراء',
-                chat: 'الدردشة',
-                reports: 'التقارير',
-                settings: 'الإعدادات',
-                secondary_admins: 'إدارة المدراء الثانويين',
-                add_new_admin: 'إضافة مدير جديد',
-                manage_permissions: 'إدارة الصلاحيات',
-                cancel: 'إلغاء',
-                save: 'حفظ',
-                delete_confirm: 'هل أنت متأكد من حذف هذا المدير؟',
-                success_save: 'تم حفظ الصلاحيات بنجاح'
-            },
-            en: {
-                direction: 'ltr',
-                welcome: 'Welcome to Dashboard',
-                subtitle: 'Comprehensive Umrah Platform Management',
-                dashboard: 'Dashboard',
-                agencies: 'Manage Agencies',
-                pilgrims: 'Manage Pilgrims',
-                offers: 'Manage Offers',
-                requests: 'Manage Requests',
-                admins: 'Manage Admins',
-                chat: 'Chat',
-                reports: 'Reports',
-                settings: 'Settings',
-                secondary_admins: 'Secondary Admins Management',
-                add_new_admin: 'Add New Admin',
-                manage_permissions: 'Manage Permissions',
-                cancel: 'Cancel',
-                save: 'Save',
-                delete_confirm: 'Are you sure you want to delete this admin?',
-                success_save: 'Permissions saved successfully'
-            },
-            fr: {
-                direction: 'ltr',
-                welcome: 'Bienvenue au Tableau de bord',
-                subtitle: 'Gestion complète de la plateforme Omra',
-                dashboard: 'Tableau de bord',
-                agencies: 'Gérer les Agences',
-                pilgrims: 'Gérer les Pèlerins',
-                offers: 'Gérer les Offres',
-                requests: 'Gérer les Demandes',
-                admins: 'Gérer les Admins',
-                chat: 'Chat',
-                reports: 'Rapports',
-                settings: 'Paramètres',
-                secondary_admins: 'Gestion des Admins Secondaires',
-                add_new_admin: 'Ajouter un Nouvel Admin',
-                manage_permissions: 'Gérer les Permissions',
-                cancel: 'Annuler',
-                save: 'Enregistrer',
-                delete_confirm: 'Êtes-vous sûr de vouloir supprimer cet admin ?',
-                success_save: 'Permissions enregistrées avec succès'
-            }
-        };
-
-        let currentLanguage = 'ar';
-        let sidebarCollapsed = false;
-
-        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            setupLanguageSwitcher();
-            setupSidebarToggle();
-            animateCards();
-        });
+        // اللغة الحالية من قاعدة البيانات
+        let currentLanguage = '<?php echo $langue_preferee; ?>';
 
-        // Language switcher
-        function setupLanguageSwitcher() {
-            const langButtons = document.querySelectorAll('.lang-btn');
-            
-            langButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const lang = this.getAttribute('data-lang');
-                    switchLanguage(lang);
-                    
-                    // Update active button
-                    langButtons.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
+        // تفعيل زر اللغة النشط وتغيير النصوص والاتجاه
+        function applyLanguage(lang) {
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+            });
+            document.querySelectorAll('[data-ar],[data-en],[data-fr]').forEach(el => {
+                const txt = el.getAttribute('data-' + lang);
+                if (txt) el.textContent = txt;
+            });
+        }
+
+        // عند الضغط على زر اللغة
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                if (lang === currentLanguage) return;
+                // حفظ اللغة في قاعدة البيانات
+                fetch('update_language.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: 'language=' + lang
+                })
+                .then(() => {
+                    // إعادة تحميل الصفحة لتطبيق اللغة المختارة من قاعدة البيانات
+                    window.location.reload();
                 });
             });
-        }
-
-        function switchLanguage(lang) {
-            currentLanguage = lang;
-            const html = document.documentElement;
-            
-            // Change direction
-            html.setAttribute('dir', translations[lang].direction);
-            html.setAttribute('lang', lang);
-            
-            // Update all translatable elements
-            const elements = document.querySelectorAll('[data-ar], [data-en], [data-fr]');
-            elements.forEach(element => {
-                const text = element.getAttribute(`data-${lang}`);
-                if (text) {
-                    element.textContent = text;
-                }
-            });
-
-            // Update CSS for RTL/LTR
-            updateLayoutDirection(lang);
-        }
-
-        function updateLayoutDirection(lang) {
-            const isRTL = lang === 'ar';
-                       const sidebar = document.querySelector('.sidebar');
-            const mainContent = document.querySelector('.main-content');
-            
-            if (isRTL) {
-                // RTL layout adjustments
-                sidebar.style.right = '0';
-                sidebar.style.left = 'auto';
-                mainContent.style.marginRight = sidebarCollapsed ? '80px' : '280px';
-                mainContent.style.marginLeft = '0';
-                
-                // Adjust sidebar menu items
-                document.querySelectorAll('.sidebar-menu a').forEach(a => {
-                    a.style.borderRadius = '0 25px 25px 0';
-                    a.style.marginRight = '1rem';
-                    a.style.marginLeft = '0';
-                });
-            } else {
-                // LTR layout adjustments
-                sidebar.style.left = '0';
-                sidebar.style.right = 'auto';
-                mainContent.style.marginLeft = sidebarCollapsed ? '80px' : '280px';
-                mainContent.style.marginRight = '0';
-                
-                // Adjust sidebar menu items
-                document.querySelectorAll('.sidebar-menu a').forEach(a => {
-                    a.style.borderRadius = '25px 0 0 25px';
-                    a.style.marginLeft = '1rem';
-                    a.style.marginRight = '0';
-                });
-            }
-        }
-
-        // Sidebar toggle functionality
-        function setupSidebarToggle() {
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('mainContent');
-            const toggleBtn = document.querySelector('.sidebar-toggle');
-            
-            // Toggle sidebar
-            window.toggleSidebar = function() {
-                sidebarCollapsed = !sidebarCollapsed;
-                
-                if (sidebarCollapsed) {
-                    sidebar.classList.add('collapsed');
-                    mainContent.classList.add('expanded');
-                    
-                    // Hide text spans in sidebar
-                    document.querySelectorAll('.sidebar-text').forEach(el => {
-                        el.style.display = 'none';
-                    });
-                    
-                    // Update toggle button icon
-                    toggleBtn.innerHTML = '<i class="fas fa-indent"></i>';
-                } else {
-                    sidebar.classList.remove('collapsed');
-                    mainContent.classList.remove('expanded');
-                    
-                    // Show text spans in sidebar
-                    document.querySelectorAll('.sidebar-text').forEach(el => {
-                        el.style.display = 'inline';
-                    });
-                    
-                    // Update toggle button icon
-                    toggleBtn.innerHTML = '<i class="fas fa-outdent"></i>';
-                }
-                
-                // Adjust main content margin based on language
-                if (currentLanguage === 'ar') {
-                    mainContent.style.marginRight = sidebarCollapsed ? '80px' : '280px';
-                } else {
-                    mainContent.style.marginLeft = sidebarCollapsed ? '80px' : '280px';
-                }
-            };
-            
-            // Responsive behavior for mobile
-            window.addEventListener('resize', function() {
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.add('collapsed');
-                    mainContent.classList.add('expanded');
-                    document.querySelectorAll('.sidebar-text').forEach(el => {
-                        el.style.display = 'none';
-                    });
-                }
-            });
-        }
-
-        // Animate cards on load
-        function animateCards() {
-            const cards = document.querySelectorAll('.stat-card');
-            cards.forEach((card, index) => {
-                card.style.animationDelay = `${index * 0.1}s`;
-            });
-        }
-
-        // Mobile menu toggle
-        document.querySelector('.sidebar-toggle').addEventListener('click', function() {
-            if (window.innerWidth <= 768) {
-                document.getElementById('sidebar').classList.toggle('open');
-            }
         });
 
-        // Secondary Admins Management
-        const permissionsModal = document.getElementById('permissionsModal');
-        const btnAddAdmin = document.querySelector('.btn-add-admin');
-        const btnCancel = document.querySelector('.btn-cancel');
-        const btnSave = document.querySelector('.btn-save');
-        const editButtons = document.querySelectorAll('.btn-edit');
-        const deleteButtons = document.querySelectorAll('.btn-delete');
-
-        // Show modal for adding new admin
-        btnAddAdmin.addEventListener('click', function() {
-            permissionsModal.style.display = 'block';
-            // Reset form
-            document.querySelectorAll('input[name="permission"]').forEach(checkbox => {
-                checkbox.checked = false;
-            });
-        });
-
-        // Hide modal
-        btnCancel.addEventListener('click', function() {
-            permissionsModal.style.display = 'none';
-        });
-
-        // Close modal when clicking outside
-        window.addEventListener('click', function(event) {
-            if (event.target === permissionsModal) {
-                permissionsModal.style.display = 'none';
-            }
-        });
-
-        // Save permissions
-        btnSave.addEventListener('click', function() {
-            const selectedPermissions = Array.from(document.querySelectorAll('input[name="permission"]:checked'))
-                .map(checkbox => checkbox.value);
-            
-            // Here you would typically send this data to your backend
-            console.log('Selected permissions:', selectedPermissions);
-            
-            // Close modal
-            permissionsModal.style.display = 'none';
-            
-            // Show success message
-            alert('تم حفظ الصلاحيات بنجاح');
-        });
-
-        // Edit admin permissions
-        editButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const row = this.closest('tr');
-                const adminName = row.querySelector('td:first-child').textContent;
-                
-                // Show modal
-                permissionsModal.style.display = 'block';
-                
-                // Here you would typically load the admin's current permissions
-                // For now, we'll just show the modal
-                console.log('Editing permissions for:', adminName);
-            });
-        });
-
-        // Delete admin
-        deleteButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                if (confirm('هل أنت متأكد من حذف هذا المدير؟')) {
-                    const row = this.closest('tr');
-                    // Here you would typically send a delete request to your backend
-                    console.log('Deleting admin:', row.querySelector('td:first-child').textContent);
-                    
-                    // Remove row from table
-                    row.remove();
-                }
-            });
-        });
+        // تطبيق اللغة مباشرة عند التحميل
+        applyLanguage(currentLanguage);
+    });
     </script>
+    <!-- ...existing code... -->
 </body>
 </html>

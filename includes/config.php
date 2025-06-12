@@ -3,7 +3,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/php-errors.log');
+ini_set('error_log', __DIR__ . '/../logs/agency_errors.log');
 
 // إعدادات اتصال Supabase
 $DB_CONFIG = [
@@ -33,11 +33,11 @@ try {
         PDO::ATTR_PERSISTENT => false
     ];
     
-    $pdo = new PDO($dsn, $DB_CONFIG['user'], $DB_CONFIG['password'], $options);
+    $GLOBALS['pdo'] = new PDO($dsn, $DB_CONFIG['user'], $DB_CONFIG['password'], $options);
     
     // تعيين المخطط إذا كان مختلفاً عن الافتراضي
     if (isset($DB_CONFIG['schema'])) {
-        $pdo->exec("SET search_path TO " . $DB_CONFIG['schema']);
+        $GLOBALS['pdo']->exec("SET search_path TO " . $DB_CONFIG['schema']);
     }
     
 } catch (\PDOException $e) {
@@ -47,9 +47,8 @@ try {
 
 // دالة مساعدة للاستعلامات الآمنة
 function executeQuery($sql, $params = []) {
-    global $pdo;
     try {
-        $stmt = $pdo->prepare($sql);
+        $stmt = $GLOBALS['pdo']->prepare($sql);
         $stmt->execute($params);
         return $stmt;
     } catch (\PDOException $e) {
@@ -58,15 +57,14 @@ function executeQuery($sql, $params = []) {
     }
 }
 
-// دالة لجلب بيانات المدير
-function getAdminData($admin_id) {
-    $sql = "SELECT id, username, full_name, email, permissions FROM admins WHERE id = ?";
-    $stmt = executeQuery($sql, [$admin_id]);
-    return $stmt ? $stmt->fetch() : false;
-}
-
 // بدء الجلسة إذا لم تكن بدأت
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// إعدادات قاعدة البيانات المحلية (إذا لزم الأمر)
+$db_host = 'localhost';
+$db_user = 'اسم_المستخدم_الحقيقي';
+$db_pass = 'كلمة_المرور_الحقيقية';
+$db_name = 'اسم_قاعدة_البيانات_الحقيقية';
 ?>
