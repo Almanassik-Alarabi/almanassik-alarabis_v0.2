@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>تسجيل دخول المدراء | منصة العمرة</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/login_admin.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="logo">
+        <i class="fas fa-kaaba"></i>
+      </div>
+      <h1>تسجيل دخول المدراء</h1>
+      <div id="error-message" class="error-message" style="display: none">
+        <i class="fas fa-exclamation-circle"></i>
+        <span id="error-text"></span>
+      </div>
+      <div id="success-message" class="success-message" style="display: none">
+        <i class="fas fa-check-circle"></i>
+        <span id="success-text"></span>
+      </div>
+      <form id="loginForm" autocomplete="on">
+        <div class="form-group">
+          <label for="email">البريد الإلكتروني</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-control"
+            required
+            autocomplete="email"
+          />
+        </div>
+        <div class="form-group">
+          <label for="password">كلمة المرور</label>
+          <div class="password-toggle">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="form-control"
+              required
+              autocomplete="current-password"
+            />
+            <i class="fas fa-eye toggle-icon" id="togglePassword"></i>
+          </div>
+        </div>
+        <button type="submit" class="btn-login">
+          <i class="fas fa-sign-in-alt"></i>
+          تسجيل الدخول
+        </button>
+      </form>
+      <div
+        id="admins-list"
+        style="
+          margin-top: 2rem;
+          background: #f9f9f9;
+          border-radius: 10px;
+          padding: 1rem;
+        "
+      >
+        <h3 style="margin-bottom: 1rem">قائمة المدراء (Admins)</h3>
+        <ul id="admins-ul" style="list-style: none; padding: 0; margin: 0"></ul>
+      </div>
+    </div>
+       <p id="message"></p>
+
+    <script src="login.js"></script>
+  </body>
+</html>

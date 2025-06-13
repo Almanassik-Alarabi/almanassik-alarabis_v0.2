@@ -1,0 +1,323 @@
+/* خطوط وأساسيات */
+body {
+  font-family: "Cairo", "Inter", Arial, sans-serif;
+  background: linear-gradient(135deg, #e9e7e7 0%, #e6f3e6 100%);
+  color: #253a2e;
+  margin: 0;
+  direction: rtl;
+}
+
+:root {
+  --primary: #176a3d; /* أخضر اسلامي رئيسي */
+  --primary-dark: #0f3f26; /* أخضر داكن */
+  --primary-light: #eaf7ec; /* أخضر فاتح */
+  --secondary: #f3f6f9; /* ثانوي فاتح */
+  --gold: #d9a441; /* ذهبي */
+  --gold-light: #fff5d0; /* ذهبي فاتح */
+  --success: #2ca87f; /* نجاح */
+  --success-light: #e6f7f2; /* نجاح فاتح */
+  --danger: #c0392b; /* خطر */
+  --warning: #f7ca18; /* تحذير */
+  --sidebar-bg: linear-gradient(120deg, #176a3d 80%, #bfa669 100%);
+  --sidebar-text: #e7f6f9;
+  --sidebar-active: #d9a441;
+  --text-secondary: #7d8c7c;
+  --border-radius: 16px;
+  --shadow: 0 2px 16px #bfa66922;
+}
+
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: row;
+}
+
+/* الشريط الجانبي */
+.sidebar {
+  width: 270px;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  min-height: 100vh;
+  box-shadow: 2px 0 16px #bfa66922;
+  padding-bottom: 30px;
+  position: relative;
+}
+
+.sidebar-header {
+  background: rgba(255, 255, 255, 0.04);
+  padding: 32px 20px 20px;
+  border-bottom: 1px solid #bfa66922;
+  text-align: center;
+  position: relative;
+}
+
+.sidebar-header .logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  gap: 10px;
+  margin-bottom: 7px;
+  color: var(--gold);
+  filter: drop-shadow(0 2px 6px #bfa66955);
+}
+
+.sidebar-header .logo i {
+  color: var(--gold);
+  filter: drop-shadow(0 2px 3px #bfa66988);
+}
+
+.sidebar-text {
+  font-size: 1.09rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--sidebar-text);
+  text-shadow: 0 1px 6px #0001;
+}
+
+.sidebar-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-menu li {
+  margin: 0;
+}
+
+.sidebar-menu li a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 30px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  transition: background 0.16s, color 0.16s, border 0.2s;
+  font-size: 1.08rem;
+  border-right: 4px solid transparent;
+  border-radius: 0 20px 20px 0;
+  margin: 3px 0;
+  font-weight: 600;
+}
+
+.sidebar-menu li a i {
+  font-size: 1.25em;
+  min-width: 26px;
+  text-align: center;
+  color: #ffe7a9; /* لون ذهب فاتح للأيقونات */
+  transition: color 0.15s;
+}
+
+.sidebar-menu li a.active,
+.sidebar-menu li a:hover {
+  background: var(--primary-light);
+  color: var(--sidebar-active);
+  border-right: 4px solid var(--sidebar-active);
+  box-shadow: 0 4px 16px #e0d2b622;
+}
+
+.sidebar-menu li a.active i,
+.sidebar-menu li a:hover i {
+  color: var(--gold);
+}
+
+/* محتوى الصفحة الرئيسية */
+.main-content {
+  flex: 1 1 auto;
+  padding: 0 0 30px 0;
+  min-width: 0;
+  background: none;
+}
+
+/* الهيدر */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: #fff;
+  margin: 0 0 24px 0;
+  padding: 30px 35px 20px 35px;
+  box-shadow: var(--shadow);
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  border-bottom: 4px solid var(--primary-light);
+  border-top: 2px solid var(--gold-light);
+}
+
+.header-left h1 {
+  font-size: 2.2rem;
+  margin: 0 0 7px 0;
+  color: var(--primary);
+  font-weight: 900;
+  letter-spacing: 0.7px;
+  text-shadow: 0 2px 6px #bfa66922;
+}
+
+.header-left p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 1.12rem;
+  font-weight: 500;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+
+.language-switcher {
+  background: var(--secondary);
+  border-radius: 8px;
+  display: flex;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid #e3e5e9;
+  box-shadow: 0 1px 6px #bfa66911;
+}
+
+.lang-btn {
+  border: none;
+  background: transparent;
+  padding: 7px 16px;
+  font-size: 1.01em;
+  color: #253a2e;
+  cursor: pointer;
+  transition: background 0.17s, color 0.17s;
+}
+
+.lang-btn.active,
+.lang-btn:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--primary-light);
+  border-radius: 8px;
+  padding: 6px 13px;
+  box-shadow: 0 2px 6px #bfa66922;
+  font-size: 1.01em;
+}
+
+.user-avatar {
+  width: 33px;
+  height: 33px;
+  background: linear-gradient(135deg, #d9a441 40%, #fff5d0 90%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.22em;
+  color: #fff;
+  margin-left: 7px;
+  box-shadow: 0 1px 5px #bfa66933;
+}
+
+/* شريط إجراءات */
+.actions-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 22px 36px 22px 36px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: 0 1px 6px #176a3d18;
+  padding: 0 15px;
+  border: 1.5px solid #e6e6ea;
+}
+
+.search-box i {
+  color: var(--primary);
+  font-size: 1.13em;
+  margin-left: 5px;
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1.09em;
+  padding: 12px 8px 12px 0;
+  width: 210px;
+  font-family: inherit;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 10px 22px;
+  font-size: 1.01em;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  transition: background 0.15s, color 0.15s, box-shadow 0.13s;
+}
+
+.btn-primary {
+  background: linear-gradient(120deg, var(--primary), #218c5b 90%);
+  color: #fff;
+  box-shadow: 0 2px 8px #176a3d22;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(120deg, #218c5b, var(--primary));
+}
+
+.btn-success {
+  background: linear-gradient(120deg, #d9a441, #f7ca18 90%);
+  color: #40330e;
+  box-shadow: 0 2px 8px #bfa66922;
+}
+
+.btn-success:hover {
+  background: linear-gradient(120deg, #f7ca18, #d9a441 90%);
+  color: #176a3d;
+}
+
+.btn-warning {
+  background: #fff9e5;
+  color: #c59a1a;
+  border: 1.5px solid #ffe5a0;
+}
+
+.btn-warning:hover {
+  background: #fff3c1;
+}
+
+.btn-danger {
+  background: #c0392b;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #a93226;
+}
+
+.btn-secondary {
+  background: #e8ebea;
+  color: #253a2e;
+}
+
+.btn-secondary:hover {
+  background: #f7f8f8;
+  color: #176a3d;
+}

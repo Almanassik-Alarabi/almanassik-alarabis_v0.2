@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إدارة الوكالات | Manage Agencies</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link rel="stylesheet" href="css/manage_agencies.css" />
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Sidebar -->
+      <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="logo">
+            <i class="fas fa-kaaba"></i>
+            <span class="sidebar-text">العمرة</span>
+          </div>
+          <p
+            class="sidebar-text"
+            data-ar="منصة إدارة العمرة"
+            data-en="Umrah Management Platform"
+            data-fr="Plateforme de Gestion Omra"
+          >
+            منصة إدارة العمرة
+          </p>
+        </div>
+        <ul class="sidebar-menu">
+          <li>
+            <a href="dashboard.html">
+              <i class="fas fa-tachometer-alt"></i>
+              <span
+                class="sidebar-text"
+                data-ar="لوحة التحكم"
+                data-en="Dashboard"
+                data-fr="Tableau de bord"
+                >لوحة التحكم</span
+              >
+            </a>
+          </li>
+          <li>
+            <a href="" class="active">
+              <i class="fas fa-building"></i>
+              <span
+                class="sidebar-text"
+                data-ar="إدارة الوكالات"
+                data-en="Manage Agencies"
+                data-fr="Gérer les Agences"
+                >إدارة الوكالات</span
+              >
+            </a>
+          </li>
+          <li>
+            <a href="demande_umrah.php">
+              <i class="fas fa-users"></i>
+              <span
+                class="sidebar-text"
+                data-ar="إدارة المعتمرين"
+                data-en="Manage Pilgrims"
+                data-fr="Gérer les Pèlerins"
+                >إدارة المعتمرين</span
+              >
+            </a>
+          </li>
+          <li>
+            <a href="manage_offers.php">
+              <i class="fas fa-tags"></i>
+              <span
+                class="sidebar-text"
+                data-ar="إدارة العروض"
+                data-en="Manage Offers"
+                data-fr="Gérer les Offres"
+                >إدارة العروض</span
+              >
+            </a>
+          </li>
+          <li>
+            <a href="manage_requests.php">
+              <i class="fas fa-clipboard-list"></i>
+              <span
+                class="sidebar-text"
+                data-ar="إدارة الطلبات"
+                data-en="Manage Requests"
+                data-fr="Gérer les Demandes"
+                >إدارة الطلبات</span
+              >
+            </a>
+          </li>
+          <li>
+            <a href="manage_admins.php">
+              <i class="fas fa-user-shield"></i>
+              <span
+                class="sidebar-text"
+                data-ar="إدارة المدراء"
+                data-en="Manage Admins"
+                data-fr="Gérer les Admins"
+                >إدارة المدراء</span
+              >
+            </a>
+          </li>
+          <!-- <li>
+                    <a href="manage_sub_admins.php">
+                        <i class="fas fa-user-cog"></i>
+                        <span class="sidebar-text" data-ar="إدارة المدراء الثانويين" data-en="Manage Secondary Admins" data-fr="Gérer les Admins Secondaires">إدارة المدراء الثانويين</span>
+                    </a>
+                </li> -->
+          <li>
+            <a href="#">
+              <i class="fas fa-comments"></i>
+              <span
+                class="sidebar-text"
+                data-ar="الدردشة"
+                data-en="Chat"
+                data-fr="Chat"
+                >الدردشة</span
+              >
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fas fa-chart-bar"></i>
+              <span
+                class="sidebar-text"
+                data-ar="التقارير"
+                data-en="Reports"
+                data-fr="Rapports"
+                >التقارير</span
+              >
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fas fa-cogs"></i>
+              <span
+                class="sidebar-text"
+                data-ar="الإعدادات"
+                data-en="Settings"
+                data-fr="Paramètres"
+                >الإعدادات</span
+              >
+            </a>
+          </li>
+        </ul>
+      </div>
+      <!-- Main Content -->
+      <div class="main-content" id="mainContent">
+        <!-- Header -->
+        <div class="header">
+          <div class="header-left">
+            <h1
+              data-ar="إدارة الوكالات السياحية"
+              data-en="Manage Travel Agencies"
+              data-fr="Gérer les Agences de Voyage"
+            >
+              إدارة الوكالات السياحية
+            </h1>
+            <p
+              data-ar="عرض وإدارة جميع الوكالات المسجلة في النظام"
+              data-en="View and manage all registered agencies in the system"
+              data-fr="Voir et gérer toutes les agences enregistrées dans le système"
+            >
+              عرض وإدارة جميع الوكالات المسجلة في النظام
+            </p>
+          </div>
+          <div class="header-right">
+            <div class="language-switcher">
+              <button class="lang-btn active" data-lang="ar">العربية</button>
+              <button class="lang-btn" data-lang="en">English</button>
+              <button class="lang-btn" data-lang="fr">Français</button>
+            </div>
+            <div class="user-info">
+              <div class="user-avatar">
+                <i class="fas fa-user"></i>
+              </div>
+              <div>
+                <div style="font-weight: 600">المدير العام</div>
+                <div style="font-size: 0.9rem; color: var(--text-secondary)">
+                  admin@umrah.com
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Actions Section -->
+        <div class="actions-section">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input
+              type="text"
+              id="searchAgencies"
+              placeholder="البحث عن الوكالات..."
+              data-ar-placeholder="البحث عن الوكالات..."
+              data-en-placeholder="Search agencies..."
+              data-fr-placeholder="Rechercher des agences..."
+              oninput="searchAgencies(this.value)"
+            />
+          </div>
+          <div class="action-buttons">
+            <button class="btn btn-primary" onclick="openAddModal()">
+              <i class="fas fa-plus"></i>
+              <span
+                data-ar="إضافة وكالة"
+                data-en="Add Agency"
+                data-fr="Ajouter Agence"
+                >إضافة وكالة</span
+              >
+            </button>
+            <button class="btn btn-success" onclick="exportData()">
+              <i class="fas fa-download"></i>
+              <span
+                data-ar="تصدير البيانات"
+                data-en="Export Data"
+                data-fr="Exporter les Données"
+                >تصدير البيانات</span
+              >
+            </button>
+          </div>
+        </div>
+        <!-- Agencies Grid -->
+        <div class="agencies-grid" id="agenciesGrid">
+          <!-- البيانات تُحقن عبر جافاسكريبت -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal إضافة وكالة جديدة / تعديل وكالة -->
+    <div id="addAgencyModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">
+            <i class="fas fa-building"></i>
+            <span
+              data-ar="إضافة وكالة جديدة"
+              data-en="Add New Agency"
+              data-fr="Ajouter une Nouvelle Agence"
+              >إضافة وكالة جديدة</span
+            >
+          </h2>
+          <span class="close" onclick="closeAddModal()">&times;</span>
+        </div>
+        <form
+          id="addAgencyForm"
+          autocomplete="off"
+          enctype="multipart/form-data"
+        >
+          <div class="form-group">
+            <label>اسم الوكالة</label>
+            <input type="text" name="nom_agence" required />
+          </div>
+          <div class="form-group">
+            <label>البريد الإلكتروني</label>
+            <input type="email" name="email" required />
+          </div>
+          <div class="form-group">
+            <label>الهاتف</label>
+            <input type="text" name="telephone" required />
+          </div>
+          <div class="form-group">
+            <label>الولاية</label>
+            <input
+              type="text"
+              name="wilaya"
+              id="wilayaInput"
+              autocomplete="off"
+              oninput="filterWilayas(this.value)"
+              required
+            />
+            <div id="wilayaSuggestions" class="suggestions-list"></div>
+          </div>
+          <div class="form-group">
+            <label>الموقع (Latitude / Longitude)</label>
+            <div style="display: flex; gap: 8px">
+              <input
+                type="text"
+                name="latitude"
+                id="latitudeInput"
+                placeholder="Latitude"
+                style="flex: 1"
+                readonly
+              />
+              <input
+                type="text"
+                name="longitude"
+                id="longitudeInput"
+                placeholder="Longitude"
+                style="flex: 1"
+                readonly
+              />
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="getCurrentLocation()"
+                title="تحديد تلقائي"
+              >
+                <i class="fas fa-location-crosshairs"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="openMapModal()"
+                title="تحديد من الخريطة"
+              >
+                <i class="fas fa-map-marker-alt"></i>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>رخصة تجارية</label>
+            <input type="text" name="commercial_license_number" />
+          </div>
+          <div class="form-group">
+            <label>صورة الملف الشخصي</label>
+            <input
+              type="file"
+              name="photo_profil_file"
+              accept="image/*"
+              onchange="previewImage(this, 'profilPreview')"
+            />
+            <img
+              id="profilPreview"
+              src=""
+              style="
+                display: none;
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                margin-top: 5px;
+                object-fit: cover;
+              "
+            />
+            <input type="hidden" name="photo_profil" />
+          </div>
+          <div class="form-group">
+            <label>صورة الغلاف</label>
+            <input
+              type="file"
+              name="photo_couverture_file"
+              accept="image/*"
+              onchange="previewImage(this, 'coverPreview')"
+            />
+            <img
+              id="coverPreview"
+              src=""
+              style="
+                display: none;
+                width: 100%;
+                max-width: 200px;
+                border-radius: 10px;
+                margin-top: 5px;
+                object-fit: cover;
+              "
+            />
+            <input type="hidden" name="photo_couverture" />
+          </div>
+          <div class="form-group">
+            <label>الحالة</label>
+            <input type="checkbox" name="approuve" /> نشطة
+          </div>
+          <div style="text-align: left; margin-top: 10px">
+            <button type="submit" class="btn btn-primary">حفظ</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="closeAddModal()"
+            >
+              إلغاء
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="mapModal" class="modal" style="display: none; z-index: 9999">
+      <div class="modal-content" style="max-width: 600px; width: 95%">
+        <div class="modal-header">
+          <h3>تحديد الموقع من الخريطة</h3>
+          <span class="close" onclick="closeMapModal()">&times;</span>
+        </div>
+        <div
+          id="map"
+          style="height: 350px; width: 100%; border-radius: 10px"
+        ></div>
+        <div style="text-align: left; margin-top: 10px">
+          <button
+            type="button"
+            class="btn btn-primary"
+            onclick="confirmMapLocation()"
+          >
+            تأكيد الموقع
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal عرض تفاصيل الوكالة -->
+    <div id="agencyDetailsModal" class="modal" style="display: none">
+      <div class="modal-content" style="max-width: 500px">
+        <div class="modal-header">
+          <h2 class="modal-title">
+            <i class="fas fa-building"></i>
+            <span>تفاصيل الوكالة</span>
+          </h2>
+          <span class="close" onclick="closeAgencyDetailsModal()">&times;</span>
+        </div>
+        <div id="agencyDetailsContent" style="padding: 20px"></div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="includes/config.js"></script>
+   <script>
+     
+      let agencies = [];
+
+      // رفع صورة إلى Supabase Storage (في جذر البكت فقط)
+      // بعد الرفع يرجع url النهائي ليتم حفظه في قاعدة البيانات
+      async function uploadImage(file, folder) {
+      if (!file) return "";
+      const fileExt = file.name.split(".").pop();
+      // حفظ الصورة في الجذر فقط بدون مجلد
+      const fileName = `${folder}_${Date.now()}.${fileExt}`;
+      const { data, error } = await supabase.storage
+        .from("agences")
+        .upload(fileName, file, { upsert: true });
+      if (error) {
+        showErrorMessage(
+        "خطأ في رفع الصورة: " +
+          error.message +
+          " (تأكد من وجود bucket باسم 'agences' في Storage)"
+        );
+        return "";
+      }
+      // احصل على رابط الصورة النهائي من Storage ليتم حفظه في قاعدة البيانات
+      const { data: publicUrlData } = supabase.storage
+        .from("agences")
+        .getPublicUrl(fileName);
+      return publicUrlData.publicUrl;
+      }
+
+      // عرض صورة قبل الرفع
+      function previewImage(input, imgId) {
+      const file = input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+        document.getElementById(imgId).src = e.target.result;
+        document.getElementById(imgId).style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+      }
+
+      // جلب الوكالات من Supabase
+      async function fetchAgencies() {
+      const { data, error } = await supabase
+        .from("agences")
+        .select("*")
+        .order("id", { ascending: false });
+      if (error) {
+        showErrorMessage("خطأ في جلب البيانات: " + error.message);
+        return;
+      }
+      agencies = data || [];
+      renderAgencies();
+      }
+
+      // عرض الوكالات بشكل احترافي (يعرض الصورة من url المخزن في قاعدة البيانات)
+      function renderAgencies(filtered = null) {
+      const grid = document.getElementById("agenciesGrid");
+      const list = filtered || agencies;
+      grid.innerHTML = list.length
+        ? list
+          .map(
+          (agency) => `
+        <div class="agency-card" data-id="${agency.id}">
+          <div class="agency-header" style="background-image: url('${
+            agency.photo_couverture ||
+            "../assets/images/default-cover.jpg"
+          }')">
+            <div class="agency-logo">
+              ${
+                agency.photo_profil
+                ? `<img src="${agency.photo_profil}" alt="Profile Picture" onerror="this.src='../assets/images/default-profile.jpg'">`
+                : `<i class="fas fa-building"></i>`
+              }
+            </div>
+          </div>
+          <div class="agency-body">
+            <h3 class="agency-name">${agency.nom_agence}</h3>
+            <div class="agency-email"><i class="fas fa-envelope"></i> ${
+              agency.email
+            }</div>
+            <div class="agency-info">
+              <div class="agency-phone"><i class="fas fa-phone"></i> ${
+                agency.telephone
+              }</div>
+              <span class="agency-status status-${
+                agency.approuve ? "active" : "pending"
+              }">
+                <span data-ar="${
+                  agency.approuve ? "نشط" : "معلق"
+                }" data-en="${
+            agency.approuve ? "Active" : "Pending"
+          }" data-fr="${agency.approuve ? "Actif" : "En attente"}">${
+            agency.approuve ? "نشط" : "معلق"
+          }</span>
+              </span>
+            </div>
+            <div class="agency-extra">
+              ${
+                agency.commercial_license_number
+                ? `<div><i class="fas fa-id-card"></i> رخصة تجارية: ${agency.commercial_license_number}</div>`
+                : ""
+              }
+              ${
+                agency.latitude && agency.longitude
+                ? `<div><i class="fas fa-map-marker-alt"></i> الموقع: ${agency.latitude}, ${agency.longitude}</div>`
+                : ""
+              }
+            </div>
+            <div class="agency-actions">
+              <button type="button" class="btn btn-success btn-sm" onclick="showAgencyDetails(${
+                agency.id
+              })">
+                <i class="fas fa-eye"></i>
+                <span data-ar="عرض" data-en="View" data-fr="Voir">عرض</span>
+              </button>
+              <button type="button" class="btn btn-warning btn-sm" onclick="editAgency(${
+                agency.id
+              })">
+                <i class="fas fa-edit"></i>
+                <span data-ar="تعديل" data-en="Edit" data-fr="Modifier">تعديل</span>
+              </button>
+              <button type="button" class="btn btn-danger btn-sm" onclick="deleteAgency(${
+                agency.id
+              })">
+                <i class="fas fa-trash"></i>
+                <span data-ar="حذف" data-en="Delete" data-fr="Supprimer">حذف</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `
+          )
+          .join("")
+        : `<div style="text-align:center;color:#888;padding:40px;">لا توجد وكالات حاليا</div>`;
+      }
+
+      // فتح نافذة إضافة وكالة
+      function openAddModal() {
+      resetAddAgencyForm();
+      document.getElementById("addAgencyModal").style.display = "block";
+      document.body.style.overflow = "hidden";
+      document.getElementById("addAgencyForm").dataset.editId = "";
+      document.getElementById("profilPreview").style.display = "none";
+      document.getElementById("coverPreview").style.display = "none";
+      }
+      function closeAddModal() {
+      document.getElementById("addAgencyModal").style.display = "none";
+      document.body.style.overflow = "auto";
+      }
+      function resetAddAgencyForm() {
+      document.getElementById("addAgencyForm").reset();
+      document.getElementById("addAgencyForm").dataset.editId = "";
+      document.getElementById("profilPreview").style.display = "none";
+      document.getElementById("coverPreview").style.display = "none";
+      }
+
+      // إضافة أو تعديل وكالة مع رفع الصور
+      async function submitAddAgency(event) {
+      event.preventDefault();
+      const form = event.target;
+      let photo_profil_url = form.photo_profil.value;
+      let photo_couverture_url = form.photo_couverture.value;
+
+      // رفع الصور إذا تم اختيارها
+      if (form.photo_profil_file.files[0]) {
+        photo_profil_url = await uploadImage(
+        form.photo_profil_file.files[0],
+        "profil"
+        );
+        form.photo_profil.value = photo_profil_url;
+      }
+      if (form.photo_couverture_file.files[0]) {
+        photo_couverture_url = await uploadImage(
+        form.photo_couverture_file.files[0],
+        "cover"
+        );
+        form.photo_couverture.value = photo_couverture_url;
+      }
+
+      // حفظ url الصورة في قاعدة البيانات
+      const agencyData = {
+        nom_agence: form.nom_agence.value,
+        email: form.email.value,
+        telephone: form.telephone.value,
+        wilaya: form.wilaya.value,
+        approuve: form.approuve.checked,
+        photo_profil: photo_profil_url,
+        photo_couverture: photo_couverture_url,
+        commercial_license_number: form.commercial_license_number.value,
+        latitude: form.latitude.value,
+        longitude: form.longitude.value,
+      };
+      const editId = form.dataset.editId;
+      let result;
+      if (editId) {
+        result = await supabase
+        .from("agences")
+        .update(agencyData)
+        .eq("id", editId);
+      } else {
+        result = await supabase.from("agences").insert([agencyData]);
+      }
+      if (result.error) {
+        showErrorMessage("حدث خطأ أثناء الحفظ");
+        return;
+      }
+      closeAddModal();
+      fetchAgencies();
+      showSuccessMessage(
+        editId ? "تم تعديل الوكالة بنجاح" : "تمت إضافة الوكالة بنجاح"
+      );
+      }
+
+      // عند تحميل الصفحة
+      document.addEventListener("DOMContentLoaded", function () {
+      document
+        .getElementById("addAgencyForm")
+        .addEventListener("submit", submitAddAgency);
+      fetchAgencies();
+      });
+
+      // تعديل وكالة
+      function editAgency(id) {
+      const agency = agencies.find((a) => a.id === id);
+      if (!agency) return;
+      openAddModal();
+      const form = document.getElementById("addAgencyForm");
+      form.nom_agence.value = agency.nom_agence || "";
+      form.email.value = agency.email || "";
+      form.telephone.value = agency.telephone || "";
+      form.wilaya.value = agency.wilaya || "";
+      form.commercial_license_number.value =
+        agency.commercial_license_number || "";
+      form.photo_profil.value = agency.photo_profil || "";
+      form.photo_couverture.value = agency.photo_couverture || "";
+      form.latitude.value = agency.latitude || "";
+      form.longitude.value = agency.longitude || "";
+      form.approuve.checked = !!agency.approuve;
+      form.dataset.editId = agency.id;
+      // معاينة الصور
+      if (agency.photo_profil) {
+        document.getElementById("profilPreview").src = agency.photo_profil;
+        document.getElementById("profilPreview").style.display = "block";
+      } else {
+        document.getElementById("profilPreview").style.display = "none";
+      }
+      if (agency.photo_couverture) {
+        document.getElementById("coverPreview").src = agency.photo_couverture;
+        document.getElementById("coverPreview").style.display = "block";
+      } else {
+        document.getElementById("coverPreview").style.display = "none";
+      }
+      }
+
+      // عرض تفاصيل الوكالة بشكل احترافي (يعرض الصورة من url المخزن في قاعدة البيانات)
+      function showAgencyDetails(id) {
+      const agency = agencies.find((a) => a.id === id);
+      if (!agency) return;
+      let html = `
+        <div style="text-align:center;">
+        <img src="${
+          agency.photo_profil || "../assets/images/default-profile.jpg"
+        }" alt="صورة" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:10px;box-shadow:0 2px 8px #0001;">
+        <h3 style="margin:10px 0 5px 0;">${agency.nom_agence || ""}</h3>
+        <span class="agency-status status-${
+          agency.approuve ? "active" : "pending"
+        }" style="padding:3px 10px;border-radius:8px;background:${
+        agency.approuve ? "#d4f5e9" : "#ffe6c1"
+      };color:${agency.approuve ? "#1a7f5a" : "#b77d00"};font-size:13px;">
+          ${agency.approuve ? "نشطة" : "معلقة"}
+        </span>
+        </div>
+        <div style="margin-top:15px;">
+        <div><b>البريد:</b> ${agency.email || ""}</div>
+        <div><b>الهاتف:</b> ${agency.telephone || ""}</div>
+        <div><b>الولاية:</b> ${agency.wilaya || ""}</div>
+        <div><b>رخصة تجارية:</b> ${
+          agency.commercial_license_number || ""
+        }</div>
+        <div><b>الموقع:</b> ${agency.latitude || ""}, ${
+        agency.longitude || ""
+      }</div>
+        <div><b>رابط صورة الملف:</b> ${
+          agency.photo_profil
+          ? `<a href="${agency.photo_profil}" target="_blank">${agency.photo_profil}</a>`
+          : "لا يوجد"
+        }</div>
+        <div><b>رابط صورة الغلاف:</b> ${
+          agency.photo_couverture
+          ? `<a href="${agency.photo_couverture}" target="_blank">${agency.photo_couverture}</a>`
+          : "لا يوجد"
+        }</div>
+        <div><b>صورة الغلاف:</b><br>
+          <img src="${
+          agency.photo_couverture || "../assets/images/default-cover.jpg"
+          }" alt="غلاف" style="width:100%;max-width:300px;border-radius:10px;margin-top:5px;object-fit:cover;box-shadow:0 2px 8px #0001;">
+        </div>
+        </div>
+      `;
+      document.getElementById("agencyDetailsContent").innerHTML = html;
+      document.getElementById("agencyDetailsModal").style.display = "block";
+      document.body.style.overflow = "hidden";
+      }
+      function closeAgencyDetailsModal() {
+      document.getElementById("agencyDetailsModal").style.display = "none";
+      document.body.style.overflow = "auto";
+      }
+
+      // حذف وكالة وعروضها
+      async function deleteAgency(id) {
+      if (!confirm("هل أنت متأكد أنك تريد حذف هذه الوكالة وجميع عروضها؟"))
+        return;
+      // حذف العروض المرتبطة بالوكالة أولاً
+      const { error: offersError } = await supabase
+        .from("offres")
+        .delete()
+        .eq("agence_id", id);
+      if (offersError) {
+        showErrorMessage("حدث خطأ أثناء حذف العروض");
+        return;
+      }
+      // ثم حذف الوكالة
+      const { error: agencyError } = await supabase
+        .from("agences")
+        .delete()
+        .eq("id", id);
+      if (agencyError) {
+        showErrorMessage("حدث خطأ أثناء حذف الوكالة");
+        return;
+      }
+      fetchAgencies();
+      showSuccessMessage("تم حذف الوكالة وجميع عروضها بنجاح");
+      }
+
+      // البحث
+      function searchAgencies(searchTerm) {
+      searchTerm = searchTerm.trim().toLowerCase();
+      if (!searchTerm) {
+        renderAgencies();
+        return;
+      }
+      const filtered = agencies.filter(
+        (a) =>
+        (a.nom_agence && a.nom_agence.toLowerCase().includes(searchTerm)) ||
+        (a.email && a.email.toLowerCase().includes(searchTerm)) ||
+        (a.telephone && a.telephone.toLowerCase().includes(searchTerm))
+      );
+      renderAgencies(filtered);
+      }
+
+      // تصدير البيانات CSV
+      function exportData() {
+      if (!agencies.length) return;
+      const header = Object.keys(agencies[0]);
+      const csv = [
+        header.join(","),
+        ...agencies.map((row) =>
+        header
+          .map(
+          (field) =>
+            `"${(row[field] || "").toString().replace(/"/g, '""')}"`
+          )
+          .join(",")
+        ),
+      ].join("\r\n");
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "agencies.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+      }
+
+      // رسالة نجاح عائمة
+      function showSuccessMessage(message) {
+      // يمكنك تحسين الرسالة حسب التصميم
+      alert(message);
+      }
+      function showErrorMessage(message) {
+      alert(message);
+      }
+
+      // قائمة ولايات الجزائر بالعربية والفرنسية
+      const wilayas = [
+      { ar: "أدرار", fr: "Adrar" },
+      { ar: "الشلف", fr: "Chlef" },
+      { ar: "الأغواط", fr: "Laghouat" },
+      { ar: "أم البواقي", fr: "Oum El Bouaghi" },
+      { ar: "باتنة", fr: "Batna" },
+      { ar: "بجاية", fr: "Béjaïa" },
+      { ar: "بسكرة", fr: "Biskra" },
+      { ar: "بشار", fr: "Béchar" },
+      { ar: "البليدة", fr: "Blida" },
+      { ar: "البويرة", fr: "Bouira" },
+      { ar: "تمنراست", fr: "Tamanrasset" },
+      { ar: "تبسة", fr: "Tébessa" },
+      { ar: "تلمسان", fr: "Tlemcen" },
+      { ar: "تيارت", fr: "Tiaret" },
+      { ar: "تيزي وزو", fr: "Tizi Ouzou" },
+      { ar: "الجزائر", fr: "Alger" },
+      { ar: "الجلفة", fr: "Djelfa" },
+      { ar: "جيجل", fr: "Jijel" },
+      { ar: "سطيف", fr: "Sétif" },
+      { ar: "سعيدة", fr: "Saïda" },
+      { ar: "سكيكدة", fr: "Skikda" },
+      { ar: "سيدي بلعباس", fr: "Sidi Bel Abbès" },
+      { ar: "عنابة", fr: "Annaba" },
+      { ar: "قالمة", fr: "Guelma" },
+      { ar: "قسنطينة", fr: "Constantine" },
+      { ar: "المدية", fr: "Médéa" },
+      { ar: "مستغانم", fr: "Mostaganem" },
+      { ar: "المسيلة", fr: "M'Sila" },
+      { ar: "معسكر", fr: "Mascara" },
+      { ar: "ورقلة", fr: "Ouargla" },
+      { ar: "وهران", fr: "Oran" },
+      { ar: "البيض", fr: "El Bayadh" },
+      { ar: "إليزي", fr: "Illizi" },
+      { ar: "برج بوعريريج", fr: "Bordj Bou Arreridj" },
+      { ar: "بومرداس", fr: "Boumerdès" },
+      { ar: "الطارف", fr: "El Tarf" },
+      { ar: "تندوف", fr: "Tindouf" },
+      { ar: "تيسمسيلت", fr: "Tissemsilt" },
+      { ar: "الوادي", fr: "El Oued" },
+      { ar: "خنشلة", fr: "Khenchela" },
+      { ar: "سوق أهراس", fr: "Souk Ahras" },
+      { ar: "تيبازة", fr: "Tipaza" },
+      { ar: "ميلة", fr: "Mila" },
+      { ar: "عين الدفلى", fr: "Aïn Defla" },
+      { ar: "النعامة", fr: "Naâma" },
+      { ar: "عين تموشنت", fr: "Aïn Témouchent" },
+      { ar: "غرداية", fr: "Ghardaïa" },
+      { ar: "غليزان", fr: "Relizane" },
+      ];
+
+      // اقتراح ولايات ديناميكي
+      function filterWilayas(val) {
+      const input = val.trim().toLowerCase();
+      const suggestions = wilayas.filter(
+        (w) => w.ar.includes(input) || w.fr.toLowerCase().includes(input)
+      );
+      const list = suggestions
+        .map(
+        (w) =>
+          `<div class="suggestion-item" onclick="selectWilaya('${w.ar}', '${w.fr}')">${w.ar} / ${w.fr}</div>`
+        )
+        .join("");
+      document.getElementById("wilayaSuggestions").innerHTML = list;
+      document.getElementById("wilayaSuggestions").style.display = list
+        ? "block"
+        : "none";
+      }
+      function selectWilaya(ar, fr) {
+      const input = document.getElementById("wilayaInput");
+      // إذا كتب بالعربية أو الفرنسية، نضع ما كتبه المستخدم
+      const userLang = input.value.match(/[ء-ي]/) ? "ar" : "fr";
+      input.value = userLang === "ar" ? ar : fr;
+      document.getElementById("wilayaSuggestions").style.display = "none";
+      }
+      // إغلاق القائمة عند فقدان التركيز
+      document.addEventListener("click", function (e) {
+      if (!e.target.closest(".form-group")) {
+        document.getElementById("wilayaSuggestions").style.display = "none";
+      }
+      });
+
+      // الموقع الجغرافي: تلقائي أو من الخريطة
+      function getCurrentLocation() {
+      if (!navigator.geolocation) {
+        showErrorMessage("المتصفح لا يدعم تحديد الموقع الجغرافي");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        function (pos) {
+        document.getElementById("latitudeInput").value =
+          pos.coords.latitude;
+        document.getElementById("longitudeInput").value =
+          pos.coords.longitude;
+        },
+        function () {
+        showErrorMessage("تعذر الحصول على الموقع تلقائياً");
+        },
+        { enableHighAccuracy: true }
+      );
+      }
+
+      // خريطة الجزائر
+      let map, marker;
+      function openMapModal() {
+      document.getElementById("mapModal").style.display = "block";
+      document.body.style.overflow = "hidden";
+      setTimeout(() => {
+        if (!map) {
+        map = L.map("map").setView([28.0339, 1.6596], 5); // الجزائر
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "© OpenStreetMap contributors",
+        }).addTo(map);
+        map.on("click", function (e) {
+          if (marker) map.removeLayer(marker);
+          marker = L.marker(e.latlng).addTo(map);
+        });
+        } else {
+        map.invalidateSize();
+        }
+      }, 200);
+      }
+      function closeMapModal() {
+      document.getElementById("mapModal").style.display = "none";
+      document.body.style.overflow = "auto";
+      }
+      function confirmMapLocation() {
+      if (!marker) {
+        showErrorMessage("اختر موقعاً من الخريطة أولاً");
+        return;
+      }
+      const latlng = marker.getLatLng();
+      document.getElementById("latitudeInput").value = latlng.lat;
+      document.getElementById("longitudeInput").value = latlng.lng;
+      closeMapModal();
+      }
+
+      // ...existing code...
+    </script>
+    <style>
+      /* ...existing code... */
+      .suggestions-list {
+        position: absolute;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        z-index: 1000;
+        max-height: 180px;
+        overflow-y: auto;
+        width: 100%;
+        box-shadow: 0 2px 8px #0001;
+        display: none;
+      }
+      .suggestion-item {
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .suggestion-item:hover {
+        background: #f2f2f2;
+      }
+      .form-group {
+        position: relative;
+      }
+      /* ...existing code... */
+    </style>
+  </body>
+</html>
